@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: teachy-app
+    build: ./docker/app
+    ports:
+      - 3000:3000
+    tty: true
+    volumes:
+      - ./app:/app
+    stdin_open: true
+    command: bash -c "rm -f tmp/pids/server.pid && bash"
+    environment:
+      TZ: Asia/Tokyo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - default
+    depends_on:
+      - postgres
+  postgres:
+    container_name: teachy-postgres
+    build: ./docker/postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data
+    environment:
+      TZ: Asia/Tokyo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - default
+
+networks:
+  default:
+
+volumes:
+  postgres_volume:
